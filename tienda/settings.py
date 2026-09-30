@@ -3,9 +3,50 @@
 import os
 from pathlib import Path
 
+# Construyo las rutas dentro del proyecto concatenando con BASE_DIR
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Configuración de plantillas
+# CLAVE DE SEGURIDAD: Necesaria para la firma criptográfica de cookies y sesiones.
+SECRET_KEY = 'django-insecure-clave-de-desarrollo-tienda-online'
+
+# MODO DEPURACIÓN: Lo establezco en True para entorno de desarrollo local.
+# Esto permite ver los mensajes detallados de error en caso de fallos de código.
+DEBUG = True
+
+# HOSTS PERMITIDOS: En desarrollo se deja vacío o con localhost. 
+# Si DEBUG fuera False, Django requeriría especificar dominios explícitos por seguridad.
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+
+# APLICACIONES INSTALADAS
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    
+    # Aplicación propia para la gestión del catálogo de productos y categorías
+    'productos',
+]
+
+
+# MIDDLEWARE DE DJANGO
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'tienda.urls'
+
+
+# CONFIGURACIÓN DE PLANTILLAS (TEMPLATES)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -26,7 +67,44 @@ TEMPLATES = [
     },
 ]
 
-# Configuración de Archivos Estáticos y Archivos Media
+WSGI_APPLICATION = 'tienda.wsgi.application'
+
+
+# BASE DE DATOS
+# Decido utilizar SQLite3 en entorno de desarrollo por su sencillez de configuración,
+# ya que no requiere instalar ni mantener un servidor de base de datos externo.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+# VALIDACIÓN DE CONTRASEÑAS
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
+
+
+# INTERNATIONALIZATION
+LANGUAGE_CODE = 'es-es'
+TIME_ZONE = 'Europe/Madrid'
+USE_I18N = True
+USE_TZ = True
+
+
+# REDIRECCIONES DE AUTENTICACIÓN
+# Defino las rutas a las que será redirigido el usuario al iniciar o cerrar sesión.
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+
+
+# ARCHIVOS ESTÁTICOS Y ARCHIVOS MEDIA
 STATIC_URL = 'static/'
 
 # Defino MEDIA_URL y MEDIA_ROOT para gestionar las imágenes subidas por los usuarios.
@@ -34,3 +112,5 @@ STATIC_URL = 'static/'
 # MEDIA_URL es la ruta pública con la que se accederá desde el navegador.
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
