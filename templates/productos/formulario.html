@@ -3,11 +3,57 @@
 {% block title %}{{ titulo }}{% endblock %}
 
 {% block content %}
-<h2>{{ titulo }}</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar</button>
-    <a href="{% url 'producto_lista' %}">Cancelar</a>
-</form>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">{{ titulo }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {{ form.non_field_errors }}
+
+                    <div class="mb-3">
+                        <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold">Nombre del producto</label>
+                        <input type="text" name="nombre" id="{{ form.nombre.id_for_label }}" value="{{ form.nombre.value|default:'' }}" class="form-control {% if form.nombre.errors %}is-invalid{% endif %}">
+                        {% if form.nombre.errors %}<div class="invalid-feedback">{{ form.nombre.errors|striptags }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">Descripción</label>
+                        <textarea name="descripcion" id="{{ form.descripcion.id_for_label }}" class="form-control {% if form.descripcion.errors %}is-invalid{% endif %}" rows="3">{{ form.descripcion.value|default:'' }}</textarea>
+                        {% if form.descripcion.errors %}<div class="invalid-feedback">{{ form.descripcion.errors|striptags }}</div>{% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.precio.id_for_label }}" class="form-label fw-bold">Precio (€)</label>
+                            <input type="number" step="0.01" name="precio" id="{{ form.precio.id_for_label }}" value="{{ form.precio.value|default:'' }}" class="form-control {% if form.precio.errors %}is-invalid{% endif %}">
+                            {% if form.precio.errors %}<div class="invalid-feedback">{{ form.precio.errors|striptags }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.categoria.id_for_label }}" class="form-label fw-bold">Categoría</label>
+                            <select name="categoria" id="{{ form.categoria.id_for_label }}" class="form-select {% if form.categoria.errors %}is-invalid{% endif %}">
+                                {% for choice_id, choice_label in form.categoria.field.choices %}
+                                    <option value="{{ choice_id }}" {% if form.categoria.value|stringformat:"s" == choice_id|stringformat:"s" %}selected{% endif %}>
+                                        {{ choice_label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.categoria.errors %}<div class="invalid-feedback">{{ form.categoria.errors|striptags }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'producto_lista' %}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

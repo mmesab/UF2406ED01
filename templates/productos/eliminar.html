@@ -3,10 +3,22 @@
 {% block title %}Eliminar Producto{% endblock %}
 
 {% block content %}
-<h2>¿Estás seguro de que deseas eliminar el producto "{{ producto.nombre }}"?</h2>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirmar eliminación</button>
-    <a href="{% url 'producto_lista' %}">Cancelar</a>
-</form>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Eliminar Producto</h4>
+            </div>
+            <div class="card-body text-center">
+                <p class="fs-5">¿Estás seguro de que deseas eliminar el producto <strong>"{{ producto.nombre }}"</strong>?</p>
+                
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <a href="{% url 'producto_lista' %}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

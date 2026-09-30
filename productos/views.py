@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
+from django.contrib import messages  # <-- Importamos el módulo de mensajes
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Categoria, Producto
 from .forms import RegistroForm, CategoriaForm, ProductoForm
@@ -17,6 +18,7 @@ def register(request):
         if form.is_valid():
             usuario = form.save()
             login(request, usuario)
+            messages.success(request, f"¡Bienvenido {usuario.username}! Tu cuenta ha sido creada exitosamente.")
             return redirect("home")
     else:
         form = RegistroForm()
@@ -37,6 +39,7 @@ def categoria_crear(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Categoría creada con éxito.")
             return redirect("categoria_lista")
     else:
         form = CategoriaForm()
@@ -54,6 +57,7 @@ def categoria_editar(request, pk):
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             form.save()
+            messages.info(request, "Categoría actualizada correctamente.")
             return redirect("categoria_lista")
     else:
         form = CategoriaForm(instance=categoria)
@@ -68,11 +72,13 @@ def categoria_editar(request, pk):
 def categoria_eliminar(request, pk):
     categoria = get_object_or_404(Categoria, pk=pk)
     if request.method == "POST":
+        nombre = categoria.nombre
         categoria.delete()
+        messages.warning(request, f"La categoría '{nombre}' ha sido eliminada.")
         return redirect("categoria_lista")
     return render(
         request,
-        "categorias/eliminar.html",  # Corregido a plural
+        "categorias/eliminar.html",
         {"categoria": categoria}
     )
 
@@ -83,7 +89,7 @@ def producto_lista(request):
     productos = Producto.objects.select_related("categoria")
     return render(
         request,
-        "productos/lista.html",  # Corregido a plural
+        "productos/lista.html",
         {"productos": productos}
     )
 
@@ -103,6 +109,7 @@ def producto_crear(request):
         form = ProductoForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Producto registrado correctamente.")
             return redirect("producto_lista")
     else:
         form = ProductoForm()
@@ -120,6 +127,7 @@ def producto_editar(request, pk):
         form = ProductoForm(request.POST, instance=producto)
         if form.is_valid():
             form.save()
+            messages.info(request, "Producto actualizado correctamente.")
             return redirect("producto_lista")
     else:
         form = ProductoForm(instance=producto)
@@ -134,7 +142,9 @@ def producto_editar(request, pk):
 def producto_eliminar(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
     if request.method == "POST":
+        nombre = producto.nombre
         producto.delete()
+        messages.warning(request, f"El producto '{nombre}' ha sido eliminado.")
         return redirect("producto_lista")
     return render(
         request,
