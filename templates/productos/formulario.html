@@ -10,7 +10,8 @@
                 <h4 class="mb-0">{{ titulo }}</h4>
             </div>
             <div class="card-body">
-                <form method="post" novalidate>
+                <!-- Se añade enctype para manejo de imágenes -->
+                <form method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
                     
                     {{ form.non_field_errors }}
@@ -45,6 +46,12 @@
                             </select>
                             {% if form.categoria.errors %}<div class="invalid-feedback">{{ form.categoria.errors|striptags }}</div>{% endif %}
                         </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.imagen.id_for_label }}" class="form-label fw-bold">Imagen del producto</label>
+                        <input type="file" name="imagen" id="{{ form.imagen.id_for_label }}" class="form-control {% if form.imagen.errors %}is-invalid{% endif %}">
+                        {% if form.imagen.errors %}<div class="invalid-feedback">{{ form.imagen.errors|striptags }}</div>{% endif %}
                     </div>
 
                     <div class="d-flex justify-content-between mt-4">

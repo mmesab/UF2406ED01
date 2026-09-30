@@ -14,9 +14,7 @@ class RegistroForm(UserCreationForm):
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError(
-                "Ya existe un usuario con este correo electrónico."
-            )
+            raise forms.ValidationError("Ya existe un usuario con este correo electrónico.")
         return email
 
 
@@ -29,4 +27,4 @@ class CategoriaForm(forms.ModelForm):
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ["nombre", "descripcion", "precio", "categoria"]
+        fields = ["nombre", "descripcion", "precio", "categoria", "imagen"]  # <-- Se añade imagen

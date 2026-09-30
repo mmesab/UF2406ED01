@@ -10,14 +10,47 @@
     {% endif %}
 </div>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for prod in productos %}
+<!-- Formulario de Búsqueda y Filtro -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o descripción..." value="{{ query }}">
+            </div>
+            <div class="col-md-4">
+                <select name="categoria" class="form-select">
+                    <option value="">Todas las categorías</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if categoria_id|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                {% if query or categoria_id %}
+                    <a href="{% url 'producto_lista' %}" class="btn btn-outline-secondary">Limpiar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Productos -->
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+    {% for prod in page_obj %}
         <div class="col">
             <div class="card h-100 shadow-sm">
+                {% if prod.imagen %}
+                    <img src="{{ prod.imagen.url }}" class="card-img-top" alt="{{ prod.nombre }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light text-center py-5 text-muted" style="height: 200px;">Sin imagen</div>
+                {% endif %}
                 <div class="card-body">
                     <span class="badge bg-secondary mb-2">{{ prod.categoria.nombre }}</span>
                     <h5 class="card-title">{{ prod.nombre }}</h5>
-                    <p class="card-text text-muted">{{ prod.descripcion|truncatewords:15 }}</p>
+                    <p class="card-text text-muted">{{ prod.descripcion|truncatewords:12 }}</p>
                     <h4 class="text-primary fw-bold">{{ prod.precio }} €</h4>
                 </div>
                 <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
@@ -33,8 +66,41 @@
         </div>
     {% empty %}
         <div class="col-12">
-            <div class="alert alert-info text-center">No hay productos disponibles.</div>
+            <div class="alert alert-info text-center">No se encontraron productos con los criterios de búsqueda.</div>
         </div>
     {% endfor %}
 </div>
+
+<!-- Paginación -->
+{% if page_obj.has_other_pages %}
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&categoria={{ categoria_id }}">Anterior</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&q={{ query }}&categoria={{ categoria_id }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&categoria={{ categoria_id }}">Siguiente</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
 {% endblock %}

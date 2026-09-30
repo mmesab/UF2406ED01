@@ -129,3 +129,8 @@ LOGOUT_REDIRECT_URL = "login"
 # Configuración de email para desarrollo (consola)
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@tienda.com"
+
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
