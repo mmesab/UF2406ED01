@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Django</title>
+</head>
+<body>
+
+    <header>
+        <a href="{% url 'home' %}">Inicio</a> | 
+            <a href="{% url 'producto_lista' %}">Productos</a> | 
+            {% if user.is_authenticated %}
+                <a href="{% url 'categoria_lista' %}">Categorías</a> | 
+                <span>Hola, {{ user.username }}</span> | 
+                <!-- Cierre de sesión mediante POST por seguridad -->
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a> | 
+                <a href="{% url 'register' %}">Registrarse</a>
+            {% endif %}
+        </nav>
+    </header>
+    <hr>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+</body>
+</html>

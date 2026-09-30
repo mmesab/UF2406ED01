@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Productos{% endblock %}
+
+{% block content %}
+<h2>Listado de Productos</h2>
+{% if user.is_authenticated %}
+    <a href="{% url 'producto_crear' %}">Nuevo Producto</a>
+    <br><br>
+{% endif %}
+<ul>
+    {% for prod in productos %}
+        <li>
+            <a href="{% url 'producto_detalle' prod.pk %}"><strong>{{ prod.nombre }}</strong></a> 
+            - {{ prod.precio }} € (Categoría: {{ prod.categoria.nombre }})
+            {% if user.is_authenticated %}
+                | <a href="{% url 'producto_editar' prod.pk %}">Editar</a>
+                | <a href="{% url 'producto_eliminar' prod.pk %}">Eliminar</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No hay productos disponibles.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
